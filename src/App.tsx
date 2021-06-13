@@ -44,10 +44,6 @@ export const App = () => {
         onSubmit={(e) => {
           e.preventDefault();
 
-          if (!formIsValid) {
-            return;
-          }
-
           dispatch({ type: 'SUBMIT' });
         }}
       >
