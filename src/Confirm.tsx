@@ -42,19 +42,26 @@ export const Confirm = ({
       aria-labelledby="dialog-title"
       aria-describedby="dialog-description"
     >
-      <DialogTitle id="dialog-title">Success!</DialogTitle>
+      {/* Avoid rendering content until Dialog is open.
+        This guards against formatting invalid dates, because the
+        form might not be valid yet. */}
+      {open && (
+        <>
+          <DialogTitle id="dialog-title">Success!</DialogTitle>
 
-      <DialogContent>
-        <DialogContentText id="dialog-description">
-          {renderMessage()}
-        </DialogContentText>
-      </DialogContent>
+          <DialogContent>
+            <DialogContentText id="dialog-description">
+              {renderMessage()}
+            </DialogContentText>
+          </DialogContent>
 
-      <DialogActions>
-        <Button color="primary" autoFocus onClick={onClose}>
-          Ok
-        </Button>
-      </DialogActions>
+          <DialogActions>
+            <Button color="primary" autoFocus onClick={onClose}>
+              Ok
+            </Button>
+          </DialogActions>
+        </>
+      )}
     </Dialog>
   );
 };
