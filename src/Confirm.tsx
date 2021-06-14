@@ -27,11 +27,20 @@ export const Confirm = ({
     const date1 = format(parseISO(startDate), prettyDateFormat);
 
     if (flightType === 'one-way') {
-      return `You have booked a one-way flight for ${date1}.`;
+      return (
+        <>
+          You have booked a one-way flight for <b>{date1}</b>.
+        </>
+      );
     } else {
       const date2 = format(parseISO(returnDate), prettyDateFormat);
 
-      return `You have booked a two-way flight from ${date1} to ${date2}.`;
+      return (
+        <>
+          You have booked a two-way flight from <b>{date1}</b> to <b>{date2}</b>
+          .
+        </>
+      );
     }
   };
 
