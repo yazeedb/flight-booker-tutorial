@@ -1,20 +1,8 @@
 /*
   Notes:
 
-  1. Start/return dates cannot be in the past
-  2. Hide Return date if one-way flight (also make sure it's impossible to change return date if one-way flight)
-  3. TS stopped me from a redundant conditional (disabled={state.flightType === 'one-way'})
-    This is a good thing to show during screencast.
-
-  4. Talk about why you should store min possible state, and derive
-  as much as possible.
-
-  5. See how existing form libs handle validation
-
-  6. Consider putting dateOrder error under returnDate 
-
-  7. Consider using something like FormField interface for
-  form validation. Also consider storing field label and ID (colocation).
+  ✅ 1. Start/return dates cannot be in the past
+  ✅ 2. Hide Return date if one-way flight (also make sure it's impossible to change return date if one-way flight)
 
   8. Consider using a decoder to guarantee against rogue form elements (select option)
 
@@ -27,6 +15,15 @@
 
   ✅ 11. returnDate should be initialized to startDate when user
   picks two-way flight.
+
+
+  ===============================================================================
+  3. TS stopped me from a redundant conditional (disabled={state.flightType === 'one-way'})
+    This is a good thing to show during screencast.
+
+  4. Talk about why you should store min possible state, and derive
+  as much as possible.
+
 
   Bonus upgrades
     1. Use @material-ui/pickers instead of native date input
