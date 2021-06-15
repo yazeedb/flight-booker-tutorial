@@ -11,6 +11,11 @@ import { Flight, ValidationErrors } from './state';
 const isBeforeOrEqual = (date1: Date, date2: Date) =>
   isBefore(date1, date2) || isEqual(date1, date2);
 
+/**
+ * `date-fns.isPast` compares time, not just date.
+ * So `1/1/1 @ 12am` is considered "past" `1/1/1 @ 12:01am`.
+ * Flight Booker doesn't care about time, so this function ignores that.
+ */
 const isPast = (date: Date) => !isSameDay(date, new Date()) && !isFuture(date);
 
 export const validateFlight = (flight: Flight): ValidationErrors => {
