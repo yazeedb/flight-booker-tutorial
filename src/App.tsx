@@ -46,7 +46,6 @@ import {
 import { useReducer } from 'react';
 import { Confirm } from './Confirm';
 import { FlightType, initialState, reducer } from './state';
-import { validateForm } from './validateForm';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -65,12 +64,13 @@ const useStyles = makeStyles((theme) => ({
 
 export const App = () => {
   const classes = useStyles();
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const { startDateValid, returnDateValid, dateOrderValid } = validateForm(
-    state.flight
+  const [{ flight, formStatus, validationErrors }, dispatch] = useReducer(
+    reducer,
+    initialState
   );
 
-  const formIsValid = startDateValid && returnDateValid && dateOrderValid;
+  const formIsValid =
+    !validationErrors.startDate && !validationErrors.returnDate;
 
   return (
     <main className={classes.main}>
@@ -89,7 +89,7 @@ export const App = () => {
           <InputLabel id={ids.flightType}>Flight type</InputLabel>
           <Select
             labelId={ids.flightType}
-            value={state.flight.type}
+            value={flight.type}
             autoFocus
             onChange={(e) => {
               const value = e.target.value as FlightType;
@@ -107,13 +107,13 @@ export const App = () => {
 
         <FormControl
           className={classes.formControl}
-          error={!startDateValid || !dateOrderValid}
+          error={!!validationErrors.startDate}
         >
           <TextField
             id={ids.startDate}
             type="date"
             label="Start date"
-            value={state.flight.startDate}
+            value={flight.startDate}
             onChange={(e) => {
               dispatch({
                 type: 'SET_START_DATE',
@@ -122,22 +122,19 @@ export const App = () => {
             }}
           />
 
-          {!startDateValid && <FormHelperText>Invalid date</FormHelperText>}
-
-          {!dateOrderValid && (
-            <FormHelperText>
-              Start date cannot be after return date
-            </FormHelperText>
-          )}
+          <FormHelperText>{validationErrors.startDate}</FormHelperText>
         </FormControl>
 
-        {state.flight.type === 'return' && (
-          <FormControl className={classes.formControl} error={!returnDateValid}>
+        {flight.type === 'return' && (
+          <FormControl
+            className={classes.formControl}
+            error={!!validationErrors.returnDate}
+          >
             <TextField
               id={ids.returnDate}
               type="date"
               label="Return date"
-              value={state.flight.returnDate}
+              value={flight.returnDate}
               onChange={(e) => {
                 dispatch({
                   type: 'SET_RETURN_DATE',
@@ -146,7 +143,7 @@ export const App = () => {
               }}
             />
 
-            {!returnDateValid && <FormHelperText>Invalid date</FormHelperText>}
+            <FormHelperText>{validationErrors.returnDate}</FormHelperText>
           </FormControl>
         )}
 
@@ -161,8 +158,8 @@ export const App = () => {
       </form>
 
       <Confirm
-        {...state}
-        open={state.formStatus === 'submitted'}
+        flight={flight}
+        open={formStatus === 'submitted'}
         onClose={() => dispatch({ type: 'CLOSE_CONFIRMATION' })}
       />
     </main>

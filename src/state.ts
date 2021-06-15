@@ -1,10 +1,11 @@
 import { format } from 'date-fns';
-import { validateForm } from './validateForm';
+import { validateFlight } from './validateForm';
 
 export type FlightType = 'one-way' | 'return';
 
 export interface State {
   formStatus: 'editing' | 'submitted';
+  validationErrors: ValidationErrors;
   flight: Flight;
 }
 
@@ -15,21 +16,27 @@ type Action =
   | { type: 'SUBMIT' }
   | { type: 'CLOSE_CONFIRMATION' };
 
+export interface ValidationErrors {
+  startDate?: string;
+  returnDate?: string;
+}
+
 export type Flight =
   | { type: 'one-way'; startDate: string }
   | { type: 'return'; startDate: string; returnDate: string };
 
 export const initialState: State = {
   formStatus: 'editing',
+  validationErrors: {},
   flight: {
     type: 'one-way',
     startDate: format(new Date(), 'yyyy-MM-dd')
   }
 };
 
-export const reducer = (state: State, action: Action): State => {
+const getNextState = (state: State, action: Action): State => {
   switch (action.type) {
-    case 'SET_FLIGHT_TYPE': {
+    case 'SET_FLIGHT_TYPE':
       if (action.payload === 'one-way') {
         return {
           ...state,
@@ -48,7 +55,6 @@ export const reducer = (state: State, action: Action): State => {
           returnDate: state.flight.startDate
         }
       };
-    }
 
     case 'SET_START_DATE':
       return {
@@ -59,9 +65,7 @@ export const reducer = (state: State, action: Action): State => {
         }
       };
 
-    case 'SET_RETURN_DATE':
-      // User cannot set returnDate if they're
-      // booking a one-way flight
+    case 'SET_RETURN_DATE': {
       if (state.flight.type === 'one-way') {
         return state;
       }
@@ -73,18 +77,11 @@ export const reducer = (state: State, action: Action): State => {
           returnDate: action.payload
         }
       };
-
+    }
     case 'SUBMIT': {
-      const { startDateValid, returnDateValid, dateOrderValid } = validateForm(
-        state.flight
-      );
+      const { startDate, returnDate } = state.validationErrors;
 
-      const formIsValid = startDateValid && returnDateValid && dateOrderValid;
-
-      // Disabled buttons are nice, but we should
-      // make it LOGICALLY IMPOSSIBLE to submit
-      // an invalid form.
-      if (!formIsValid) {
+      if (startDate || returnDate) {
         return state;
       }
 
@@ -100,4 +97,13 @@ export const reducer = (state: State, action: Action): State => {
         formStatus: 'editing'
       };
   }
+};
+
+export const reducer = (state: State, action: Action): State => {
+  const nextState = getNextState(state, action);
+
+  return {
+    ...nextState,
+    validationErrors: validateFlight(nextState.flight)
+  };
 };

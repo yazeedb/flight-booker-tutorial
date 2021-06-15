@@ -7,11 +7,11 @@ import {
   DialogContentText
 } from '@material-ui/core';
 import { format, parseISO } from 'date-fns';
-import { Flight, State } from './state';
+import { Flight } from './state';
 
 const prettyDateFormat = 'M/d/yyyy';
 
-interface ConfirmProps extends State {
+interface ConfirmProps {
   open: boolean;
   flight: Flight;
   onClose: () => void;

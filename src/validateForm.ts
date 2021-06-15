@@ -1,34 +1,49 @@
-import { isEqual, isBefore, isValid, parseISO } from 'date-fns';
-import { Flight } from './state';
+import {
+  isEqual,
+  isBefore,
+  isValid,
+  parseISO,
+  isFuture,
+  isSameDay
+} from 'date-fns';
+import { Flight, ValidationErrors } from './state';
 
 const isBeforeOrEqual = (date1: Date, date2: Date) =>
   isBefore(date1, date2) || isEqual(date1, date2);
 
-interface ValidationResult {
-  startDateValid: boolean;
-  returnDateValid: boolean;
-  dateOrderValid: boolean;
-}
+const isPast = (date: Date) => !isSameDay(date, new Date()) && !isFuture(date);
 
-export const validateForm = (flight: Flight): ValidationResult => {
+export const validateFlight = (flight: Flight): ValidationErrors => {
   const sISO = parseISO(flight.startDate);
 
   if (flight.type === 'one-way') {
     return {
-      startDateValid: isValid(sISO),
-
-      // We don't care about returnDate since
-      // it's a one-way flight
-      returnDateValid: true,
-      dateOrderValid: true
+      startDate: validateDate(sISO)
     };
   }
 
   const rISO = parseISO(flight.returnDate);
 
   return {
-    startDateValid: isValid(sISO),
-    returnDateValid: isValid(rISO),
-    dateOrderValid: isBeforeOrEqual(sISO, rISO)
+    startDate: validateDate(sISO),
+    returnDate: validateDate(rISO) || validateRange(sISO, rISO)
   };
+};
+
+const validateDate = (date: Date) => {
+  if (!isValid(date)) {
+    return 'Invalid date';
+  }
+
+  console.log(isSameDay(date, new Date()));
+
+  if (isPast(date)) {
+    return 'Date cannot be in the past';
+  }
+};
+
+const validateRange = (d1: Date, d2: Date) => {
+  if (!isBeforeOrEqual(d1, d2)) {
+    return 'Return date cannot be before start date';
+  }
 };
