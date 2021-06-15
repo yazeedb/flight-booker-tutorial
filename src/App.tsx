@@ -22,14 +22,15 @@
   it into a flightType. This'll eliminate the need for type-casting
   in the onChange.
 
-  10. Make it impossible for one-way flight and returnDate to
+  ✅ 10. Make it impossible for one-way flight and returnDate to
   be together.
 
-  11. returnDate should be initialized to startDate when user
+  ✅ 11. returnDate should be initialized to startDate when user
   picks two-way flight.
 
   Bonus upgrades
     1. Use @material-ui/pickers instead of native date input
+    2. Immer for cleaner reducer updates
 */
 
 import {
@@ -65,8 +66,9 @@ const useStyles = makeStyles((theme) => ({
 export const App = () => {
   const classes = useStyles();
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { startDateValid, returnDateValid, dateOrderValid } =
-    validateForm(state);
+  const { startDateValid, returnDateValid, dateOrderValid } = validateForm(
+    state.flight
+  );
 
   const formIsValid = startDateValid && returnDateValid && dateOrderValid;
 
@@ -87,7 +89,7 @@ export const App = () => {
           <InputLabel id={ids.flightType}>Flight type</InputLabel>
           <Select
             labelId={ids.flightType}
-            value={state.flightType}
+            value={state.flight.type}
             autoFocus
             onChange={(e) => {
               const value = e.target.value as FlightType;
@@ -111,7 +113,7 @@ export const App = () => {
             id={ids.startDate}
             type="date"
             label="Start date"
-            value={state.startDate}
+            value={state.flight.startDate}
             onChange={(e) => {
               dispatch({
                 type: 'SET_START_DATE',
@@ -129,13 +131,13 @@ export const App = () => {
           )}
         </FormControl>
 
-        {state.flightType === 'return' && (
+        {state.flight.type === 'return' && (
           <FormControl className={classes.formControl} error={!returnDateValid}>
             <TextField
               id={ids.returnDate}
               type="date"
               label="Return date"
-              value={state.returnDate}
+              value={state.flight.returnDate}
               onChange={(e) => {
                 dispatch({
                   type: 'SET_RETURN_DATE',

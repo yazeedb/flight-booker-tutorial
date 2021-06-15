@@ -15,51 +15,69 @@ type Action =
   | { type: 'SUBMIT' }
   | { type: 'CLOSE_CONFIRMATION' };
 
-const inputDateFormat = 'yyyy-MM-dd';
-
-type Flight =
+export type Flight =
   | { type: 'one-way'; startDate: string }
-  | { type: 'two-way'; startDate: string; returnDate: string };
-
-const initialDate = format(new Date(), inputDateFormat);
+  | { type: 'return'; startDate: string; returnDate: string };
 
 export const initialState: State = {
   formStatus: 'editing',
   flight: {
     type: 'one-way',
-    startDate: initialDate
+    startDate: format(new Date(), 'yyyy-MM-dd')
   }
 };
 
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
-    case 'SET_FLIGHT_TYPE':
+    case 'SET_FLIGHT_TYPE': {
+      if (action.payload === 'one-way') {
+        return {
+          ...state,
+          flight: {
+            type: 'one-way',
+            startDate: state.flight.startDate
+          }
+        };
+      }
+
       return {
         ...state,
-        flightType: action.payload
+        flight: {
+          type: 'return',
+          startDate: state.flight.startDate,
+          returnDate: state.flight.startDate
+        }
       };
+    }
 
     case 'SET_START_DATE':
       return {
         ...state,
-        startDate: action.payload
+        flight: {
+          ...state.flight,
+          startDate: action.payload
+        }
       };
 
     case 'SET_RETURN_DATE':
       // User cannot set returnDate if they're
       // booking a one-way flight
-      if (state.flightType === 'one-way') {
+      if (state.flight.type === 'one-way') {
         return state;
       }
 
       return {
         ...state,
-        returnDate: action.payload
+        flight: {
+          ...state.flight,
+          returnDate: action.payload
+        }
       };
 
     case 'SUBMIT': {
-      const { startDateValid, returnDateValid, dateOrderValid } =
-        validateForm(state);
+      const { startDateValid, returnDateValid, dateOrderValid } = validateForm(
+        state.flight
+      );
 
       const formIsValid = startDateValid && returnDateValid && dateOrderValid;
 

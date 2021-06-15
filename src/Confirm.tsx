@@ -7,41 +7,35 @@ import {
   DialogContentText
 } from '@material-ui/core';
 import { format, parseISO } from 'date-fns';
-import { State } from './state';
+import { Flight, State } from './state';
 
 const prettyDateFormat = 'M/d/yyyy';
 
 interface ConfirmProps extends State {
   open: boolean;
+  flight: Flight;
   onClose: () => void;
 }
 
-export const Confirm = ({
-  open,
-  flightType,
-  startDate,
-  returnDate,
-  onClose
-}: ConfirmProps) => {
+export const Confirm = ({ open, flight, onClose }: ConfirmProps) => {
   const renderMessage = () => {
-    const date1 = format(parseISO(startDate), prettyDateFormat);
+    const date1 = format(parseISO(flight.startDate), prettyDateFormat);
 
-    if (flightType === 'one-way') {
+    if (flight.type === 'one-way') {
       return (
         <>
           You have booked a one-way flight for <b>{date1}</b>.
         </>
       );
-    } else {
-      const date2 = format(parseISO(returnDate), prettyDateFormat);
-
-      return (
-        <>
-          You have booked a two-way flight from <b>{date1}</b> to <b>{date2}</b>
-          .
-        </>
-      );
     }
+
+    const date2 = format(parseISO(flight.returnDate), prettyDateFormat);
+
+    return (
+      <>
+        You have booked a two-way flight from <b>{date1}</b> to <b>{date2}</b>.
+      </>
+    );
   };
 
   return (
