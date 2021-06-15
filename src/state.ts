@@ -5,9 +5,7 @@ export type FlightType = 'one-way' | 'return';
 
 export interface State {
   formStatus: 'editing' | 'submitted';
-  flightType: FlightType;
-  startDate: string;
-  returnDate: string;
+  flight: Flight;
 }
 
 type Action =
@@ -19,11 +17,18 @@ type Action =
 
 const inputDateFormat = 'yyyy-MM-dd';
 
+type Flight =
+  | { type: 'one-way'; startDate: string }
+  | { type: 'two-way'; startDate: string; returnDate: string };
+
+const initialDate = format(new Date(), inputDateFormat);
+
 export const initialState: State = {
   formStatus: 'editing',
-  flightType: 'one-way',
-  startDate: format(new Date(), inputDateFormat),
-  returnDate: format(new Date(), inputDateFormat)
+  flight: {
+    type: 'one-way',
+    startDate: initialDate
+  }
 };
 
 export const reducer = (state: State, action: Action): State => {

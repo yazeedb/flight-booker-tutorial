@@ -1,3 +1,37 @@
+/*
+  Notes:
+
+  1. Start/return dates cannot be in the past
+  2. Hide Return date if one-way flight (also make sure it's impossible to change return date if one-way flight)
+  3. TS stopped me from a redundant conditional (disabled={state.flightType === 'one-way'})
+    This is a good thing to show during screencast.
+
+  4. Talk about why you should store min possible state, and derive
+  as much as possible.
+
+  5. See how existing form libs handle validation
+
+  6. Consider putting dateOrder error under returnDate 
+
+  7. Consider using something like FormField interface for
+  form validation. Also consider storing field label and ID (colocation).
+
+  8. Consider using a decoder to guarantee against rogue form elements (select option)
+
+  9. Consider making SET_FLIGHT_TYPE.payload a string, and parse
+  it into a flightType. This'll eliminate the need for type-casting
+  in the onChange.
+
+  10. Make it impossible for one-way flight and returnDate to
+  be together.
+
+  11. returnDate should be initialized to startDate when user
+  picks two-way flight.
+
+  Bonus upgrades
+    1. Use @material-ui/pickers instead of native date input
+*/
+
 import {
   Select,
   MenuItem,
@@ -38,7 +72,9 @@ export const App = () => {
 
   return (
     <main className={classes.main}>
-      <h1>Flight Booker</h1>
+      <header>
+        <h1>Flight Booker</h1>
+      </header>
 
       <form
         onSubmit={(e) => {
@@ -93,23 +129,24 @@ export const App = () => {
           )}
         </FormControl>
 
-        <FormControl className={classes.formControl} error={!returnDateValid}>
-          <TextField
-            id={ids.returnDate}
-            type="date"
-            label="Return date"
-            value={state.returnDate}
-            disabled={state.flightType === 'one-way'}
-            onChange={(e) => {
-              dispatch({
-                type: 'SET_RETURN_DATE',
-                payload: e.target.value
-              });
-            }}
-          />
+        {state.flightType === 'return' && (
+          <FormControl className={classes.formControl} error={!returnDateValid}>
+            <TextField
+              id={ids.returnDate}
+              type="date"
+              label="Return date"
+              value={state.returnDate}
+              onChange={(e) => {
+                dispatch({
+                  type: 'SET_RETURN_DATE',
+                  payload: e.target.value
+                });
+              }}
+            />
 
-          {!returnDateValid && <FormHelperText>Invalid date</FormHelperText>}
-        </FormControl>
+            {!returnDateValid && <FormHelperText>Invalid date</FormHelperText>}
+          </FormControl>
+        )}
 
         <Button
           type="submit"
@@ -144,8 +181,3 @@ const optionLabels: OptionLabel[] = [
   { label: 'One way flight', value: 'one-way' },
   { label: 'Return flight', value: 'return' }
 ];
-
-/*
-  Bonus upgrades
-    1. Use @material-ui/pickers instead of native date input
-*/
