@@ -35,8 +35,6 @@ const validateDate = (date: Date) => {
     return 'Invalid date';
   }
 
-  console.log(isSameDay(date, new Date()));
-
   if (isPast(date)) {
     return 'Date cannot be in the past';
   }
