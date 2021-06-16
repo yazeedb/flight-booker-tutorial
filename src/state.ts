@@ -78,10 +78,9 @@ const getNextState = (state: State, action: Action): State => {
         }
       };
     }
-    case 'SUBMIT': {
-      const { startDate, returnDate } = state.validationErrors;
 
-      if (startDate || returnDate) {
+    case 'SUBMIT': {
+      if (hasValidationErrors(state.validationErrors)) {
         return state;
       }
 
@@ -107,3 +106,5 @@ export const reducer = (state: State, action: Action): State => {
     validationErrors: validateFlight(nextState.flight)
   };
 };
+
+const hasValidationErrors = (e: ValidationErrors) => Object.keys(e).length > 0;
