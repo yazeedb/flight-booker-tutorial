@@ -38,24 +38,53 @@ import {
   FormControl,
   Button,
   TextField,
-  FormHelperText
+  FormHelperText,
+  Card,
+  CardContent,
+  CardActions
 } from '@material-ui/core';
+import { Flight } from '@material-ui/icons';
+import cn from 'classnames';
 import { useReducer } from 'react';
 import { Confirm } from './Confirm';
 import { FlightType, initialState, reducer } from './state';
 
 const useStyles = makeStyles((theme) => ({
-  main: {
+  appSpacing: {
     paddingLeft: theme.spacing(4),
     paddingRight: theme.spacing(4),
-
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2)
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderTop: `6px solid ${'#0967D2'}`,
+    backgroundColor: 'white',
+    color: '#52606D',
+    borderBottom: `3px solid ${'#E4E7EB'}`
+  },
+  icon: {
+    color: '#0967D2',
+    position: 'relative',
+    left: '-15px',
+    transform: 'rotate(90deg)'
+  },
+  card: {
+    margin: theme.spacing(4)
   },
   formControl: {
     marginBottom: theme.spacing(3),
     minWidth: 120,
     display: 'block'
+  },
+  label: {
+    color: '#52606D'
+  },
+  button: {
+    backgroundColor: '#0967D2',
+    fontWeight: 'bold'
   }
 }));
 
@@ -70,89 +99,99 @@ export const App = () => {
     !validationErrors.startDate && !validationErrors.returnDate;
 
   return (
-    <main className={classes.main}>
-      <header>
+    <main>
+      <header className={cn(classes.appSpacing, classes.header)}>
+        <Flight className={classes.icon} />
         <h1>Flight Booker</h1>
       </header>
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
+      <Card className={classes.card}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
 
-          dispatch({ type: 'SUBMIT' });
-        }}
-      >
-        <FormControl className={classes.formControl}>
-          <InputLabel id={ids.flightType}>Flight type</InputLabel>
-          <Select
-            labelId={ids.flightType}
-            value={flight.type}
-            autoFocus
-            onChange={(e) => {
-              const value = e.target.value as FlightType;
-
-              dispatch({ type: 'SET_FLIGHT_TYPE', payload: value });
-            }}
-          >
-            {optionLabels.map((o) => (
-              <MenuItem value={o.value} key={o.value}>
-                {o.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        <FormControl
-          className={classes.formControl}
-          error={!!validationErrors.startDate}
+            dispatch({ type: 'SUBMIT' });
+          }}
         >
-          <TextField
-            id={ids.startDate}
-            type="date"
-            label="Start date"
-            value={flight.startDate}
-            onChange={(e) => {
-              dispatch({
-                type: 'SET_START_DATE',
-                payload: e.target.value
-              });
-            }}
-          />
+          <CardContent>
+            <FormControl className={classes.formControl}>
+              <InputLabel id={ids.flightType} className={classes.label}>
+                Flight type
+              </InputLabel>
+              <Select
+                labelId={ids.flightType}
+                value={flight.type}
+                autoFocus
+                onChange={(e) => {
+                  const value = e.target.value as FlightType;
 
-          <FormHelperText>{validationErrors.startDate}</FormHelperText>
-        </FormControl>
+                  dispatch({ type: 'SET_FLIGHT_TYPE', payload: value });
+                }}
+              >
+                {optionLabels.map((o) => (
+                  <MenuItem value={o.value} key={o.value}>
+                    {o.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
-        {flight.type === 'return' && (
-          <FormControl
-            className={classes.formControl}
-            error={!!validationErrors.returnDate}
-          >
-            <TextField
-              id={ids.returnDate}
-              type="date"
-              label="Return date"
-              value={flight.returnDate}
-              onChange={(e) => {
-                dispatch({
-                  type: 'SET_RETURN_DATE',
-                  payload: e.target.value
-                });
-              }}
-            />
+            <FormControl
+              className={classes.formControl}
+              error={!!validationErrors.startDate}
+            >
+              <TextField
+                id={ids.startDate}
+                type="date"
+                label="Start date"
+                value={flight.startDate}
+                onChange={(e) => {
+                  dispatch({
+                    type: 'SET_START_DATE',
+                    payload: e.target.value
+                  });
+                }}
+              />
 
-            <FormHelperText>{validationErrors.returnDate}</FormHelperText>
-          </FormControl>
-        )}
+              <FormHelperText>{validationErrors.startDate}</FormHelperText>
+            </FormControl>
 
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          disabled={!formIsValid}
-        >
-          Book flight
-        </Button>
-      </form>
+            {flight.type === 'return' && (
+              <FormControl
+                className={classes.formControl}
+                error={!!validationErrors.returnDate}
+              >
+                <TextField
+                  id={ids.returnDate}
+                  type="date"
+                  label="Return date"
+                  value={flight.returnDate}
+                  onChange={(e) => {
+                    dispatch({
+                      type: 'SET_RETURN_DATE',
+                      payload: e.target.value
+                    });
+                  }}
+                />
+
+                <FormHelperText>{validationErrors.returnDate}</FormHelperText>
+              </FormControl>
+            )}
+          </CardContent>
+
+          <CardActions>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={!formIsValid}
+              className={classes.button}
+            >
+              Book flight
+            </Button>
+          </CardActions>
+        </form>
+      </Card>
 
       <Confirm
         flight={flight}
