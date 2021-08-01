@@ -6,14 +6,14 @@ import {
   Input,
   Flex,
   Box,
-  FormErrorMessage
+  FormErrorMessage,
+  Button
 } from '@chakra-ui/react';
 import { CalendarIcon } from '@chakra-ui/icons';
 import { useReducer } from 'react';
 import { Confirm } from './Confirm';
 import { FlightType, initialState, reducer } from './state';
 import { validateFlight } from './validateForm';
-import { PrimaryButton } from './PrimaryButton';
 
 export const App = () => {
   const [{ flight, formStatus }, dispatch] = useReducer(reducer, initialState);
@@ -33,7 +33,7 @@ export const App = () => {
         borderBottom="3px solid"
         borderBottomColor="brand.shadow"
         borderTop="6px solid"
-        borderTopColor="brand.blue"
+        borderTopColor="brand.blue.normal"
         paddingX={4}
         paddingY={2}
         marginBottom={2}
@@ -53,7 +53,7 @@ export const App = () => {
           }}
         >
           <FormControl marginBottom={4}>
-            <FormLabel id={formMetadata.flightType.id}>
+            <FormLabel id={formMetadata.flightType.id} variant="primary">
               {formMetadata.flightType.label}
             </FormLabel>
             <Select
@@ -77,7 +77,7 @@ export const App = () => {
             marginBottom={4}
             isInvalid={!!validationErrors.startDate}
           >
-            <FormLabel id={formMetadata.startDate.id}>
+            <FormLabel id={formMetadata.startDate.id} variant="primary">
               {formMetadata.startDate.label}
             </FormLabel>
             <Input
@@ -100,7 +100,7 @@ export const App = () => {
               marginBottom={4}
               isInvalid={!!validationErrors.returnDate}
             >
-              <FormLabel id={formMetadata.returnDate.id}>
+              <FormLabel id={formMetadata.returnDate.id} variant="primary">
                 {formMetadata.returnDate.label}
               </FormLabel>
 
@@ -120,9 +120,9 @@ export const App = () => {
             </FormControl>
           )}
 
-          <PrimaryButton type="submit" isDisabled={!formIsValid}>
+          <Button variant="primary" type="submit" isDisabled={!formIsValid}>
             {formMetadata.submit.label}
-          </PrimaryButton>
+          </Button>
 
           <Confirm
             flight={flight}

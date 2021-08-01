@@ -5,10 +5,10 @@ import {
   ModalContent,
   ModalOverlay,
   ModalCloseButton,
-  ModalBody
+  ModalBody,
+  Button
 } from '@chakra-ui/react';
 import { format, parseISO } from 'date-fns';
-import { PrimaryButton } from './PrimaryButton';
 import { Flight } from './state';
 
 export const getPrettyDate = (date: string) =>
@@ -53,9 +53,9 @@ export const Confirm = ({ open, flight, onClose }: ConfirmProps) => {
         <ModalBody>{open && renderMessage()}</ModalBody>
 
         <ModalFooter>
-          <PrimaryButton autoFocus onClick={onClose}>
+          <Button variant="primary" autoFocus onClick={onClose}>
             Ok
-          </PrimaryButton>
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
