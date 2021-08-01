@@ -33,9 +33,18 @@ export const validateFlight = (flight: Flight): ValidationErrors => {
   }
 
   const rISO = parseISO(flight.returnDate);
+  const startDateValidation = validateDate(sISO);
+
+  // If startDate is invalid, just show that error first.
+  // Let user focus on one error at a time.
+  if (startDateValidation) {
+    return {
+      startDate: startDateValidation
+    };
+  }
 
   return {
-    startDate: validateDate(sISO),
+    startDate: startDateValidation,
     returnDate: validateDate(rISO) || validateRange(sISO, rISO)
   };
 };
